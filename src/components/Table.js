@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import MyContext from '../contexts/MyContext';
 
 function Table() {
-  const { apiData } = useContext(MyContext);
+  const { apiData, inputName } = useContext(MyContext);
   const names = apiData.length > 0 ? Object.keys(apiData[0]) : [];
 
   return (
@@ -20,7 +20,7 @@ function Table() {
         </thead>
         <tbody>
           {
-            apiData.map((data) => (
+            apiData.filter((input) => input.name.includes(inputName)).map((data) => (
               <tr key={ data.name }>
                 <td>{data.name}</td>
                 <td>{data.rotation_period}</td>
