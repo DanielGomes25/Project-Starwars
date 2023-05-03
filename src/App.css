@@ -3,16 +3,19 @@ body {
   color: silver;
   text-align: center;
 }
+
 table {
   border: 1px solid white;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
 }
+
 tbody {
   border: 1px solid white;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
 }
+
 tr {
  border: 1px solid white;
 }
