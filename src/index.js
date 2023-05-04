@@ -7,5 +7,6 @@ ReactDOM.createRoot(document.getElementById('root'))
   .render(
     <MyProvider>
       <App />
+
     </MyProvider>,
   );
