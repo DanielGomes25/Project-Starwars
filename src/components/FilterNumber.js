@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import MyContext from '../contexts/MyContext';
-import { Conditions, selectName } from '../data';
 
 function FilterNumber() {
   const { NameSelect,
@@ -9,17 +8,25 @@ function FilterNumber() {
     inputNumber,
     setinputNumber,
     filterApi,
+    SaveFilter,
+    initialStateName,
+    initialStateRules,
+    saveMultipleFilter,
+    apiData,
     setNameSelect,
   } = useContext(MyContext);
+  console.log(saveMultipleFilter);
+  console.log(apiData);
+  console.log(SaveFilter);
 
   return (
-    <>
+    <div>
       <select
         value={ NameSelect }
         onChange={ ({ target }) => setNameSelect(target.value) }
         data-testid="column-filter"
       >
-        {selectName.map((select) => (
+        {initialStateName.map((select) => (
           <option
             key={ select }
           >
@@ -33,8 +40,8 @@ function FilterNumber() {
         onChange={ ({ target }) => setRules(target.value) }
         data-testid="comparison-filter"
       >
-        {Conditions.map((Condition) => (
-          <option key={ Condition }>{Condition}</option>
+        {initialStateRules.map((condition) => (
+          <option key={ condition }>{condition}</option>
         ))}
       </select>
       <input
@@ -44,13 +51,34 @@ function FilterNumber() {
         onChange={ ({ target }) => setinputNumber(target.value) }
       />
       <button
+        type="button"
         data-testid="button-filter"
         onClick={ filterApi }
       >
         FILTRAR
 
       </button>
-    </>
+
+      {
+        (SaveFilter.map((visible) => (
+          <>
+            <h4 key={ visible.NameSelect }>
+
+              {visible.NameSelect}
+              {' '}
+
+              {visible.Rules}
+              {' '}
+
+              {visible.inputNumber}
+
+            </h4>
+            <button>Remover Filtro</button>
+          </>
+        ))
+        )
+      }
+    </div>
   );
 }
 

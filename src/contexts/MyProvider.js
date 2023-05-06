@@ -1,15 +1,27 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import MyContext from './MyContext';
-// import { selectName, Conditions } from '../data';
 
 function MyProvider({ children }) {
   const [apiData, setapiData] = useState([]);
   const [inputName, setinputName] = useState('');
-  const [NameSelect, setNameSelect] = useState('population');
-  const [Rules, setRules] = useState('maior que');
   const [inputNumber, setinputNumber] = useState(0);
-  // const [SaveFilter, setSaveFilter] = useState([]);
+  const [SaveFilter, setSaveFilter] = useState([]);
+  const [saveNames, setsaveNames] = useState([]);
+  const [initialStateName, setinitialStateName] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
+  const [initialStateRules] = useState([
+    'maior que',
+    'menor que',
+    'igual a',
+  ]);
+  const [NameSelect, setNameSelect] = useState(initialStateName[0]);
+  const [Rules, setRules] = useState(initialStateRules[0]);
 
   useEffect(() => {
     const requestApi = async () => {
@@ -22,50 +34,70 @@ function MyProvider({ children }) {
     requestApi();
   }, []);
 
-  const handleSelectedNames = useCallback(({ target }) => {
-    setNameSelect((previousState) => [...previousState, target.value]);
-  }, []);
-
   const filterApi = useCallback(() => {
     if (Rules === 'maior que') {
       const filterMaior = apiData
         .filter((data) => Number(data[NameSelect] > Number(inputNumber)));
+      setSaveFilter([...SaveFilter, { NameSelect, inputNumber, Rules }]);
       setapiData(filterMaior);
     } else if (Rules === 'menor que') {
       const filterMenor = apiData
         .filter((data) => Number(data[NameSelect] <= inputNumber));
+      setsaveMultipleFilter(apiData);
+      setSaveFilter([...SaveFilter, { NameSelect, inputNumber, Rules }]);
       setapiData(filterMenor);
-    } else if (Rules === 'igual a') {
+    } else {
       const filterIgual = apiData
         .filter((data) => Number(data[NameSelect] === inputNumber));
+      setsaveMultipleFilter(apiData);
+      setSaveFilter([...SaveFilter, { NameSelect, inputNumber, Rules }]);
       setapiData(filterIgual);
     }
-  }, [Rules, apiData, inputNumber, NameSelect]);
+    const saveSelectName = (SaveFilter, { NameSelect });
+    const removeNames = [...initialStateName
+      .filter((state) => !state.includes(saveSelectName.NameSelect))];
+    setinitialStateName(removeNames);
+    setNameSelect(removeNames[0]);
+  }, [
+    Rules,
+    apiData,
+    inputNumber,
+    NameSelect,
+    SaveFilter,
+    initialStateName]);
 
   const values = useMemo(() => ({
     apiData,
     inputName,
     setinputName,
     NameSelect,
-    handleSelectedNames,
     Rules,
     setRules,
     setinputNumber,
     inputNumber,
     filterApi,
     setNameSelect,
+    SaveFilter,
+    saveNames,
+    setsaveNames,
+    initialStateRules,
+    initialStateName,
   }), [
     apiData,
     inputName,
     setinputName,
     NameSelect,
-    handleSelectedNames,
     Rules,
     setRules,
     setinputNumber,
     inputNumber,
     filterApi,
     setNameSelect,
+    SaveFilter,
+    saveNames,
+    setsaveNames,
+    initialStateRules,
+    initialStateName,
   ]);
 
   return (
