@@ -37,19 +37,17 @@ function MyProvider({ children }) {
   const filterApi = useCallback(() => {
     if (Rules === 'maior que') {
       const filterMaior = apiData
-        .filter((data) => Number(data[NameSelect] > Number(inputNumber)));
+        .filter((data) => (data[NameSelect] > +inputNumber));
       setSaveFilter([...SaveFilter, { NameSelect, inputNumber, Rules }]);
       setapiData(filterMaior);
     } else if (Rules === 'menor que') {
       const filterMenor = apiData
-        .filter((data) => Number(data[NameSelect] <= inputNumber));
-      setsaveMultipleFilter(apiData);
+        .filter((data) => (data[NameSelect] < +inputNumber));
       setSaveFilter([...SaveFilter, { NameSelect, inputNumber, Rules }]);
       setapiData(filterMenor);
     } else {
       const filterIgual = apiData
-        .filter((data) => Number(data[NameSelect] === inputNumber));
-      setsaveMultipleFilter(apiData);
+        .filter((data) => (data[NameSelect] === inputNumber));
       setSaveFilter([...SaveFilter, { NameSelect, inputNumber, Rules }]);
       setapiData(filterIgual);
     }
@@ -65,6 +63,13 @@ function MyProvider({ children }) {
     NameSelect,
     SaveFilter,
     initialStateName]);
+
+  const handleRemoveFilter = useCallback((filterRemove) => {
+    const removeFilter = SaveFilter.filter((save) => save.NameSelect !== filterRemove);
+    setSaveFilter(removeFilter);
+    setinitialStateName((prevState) => [...prevState, filterRemove]);
+    setapiData(apiData);
+  }, [SaveFilter, apiData]);
 
   const values = useMemo(() => ({
     apiData,
@@ -82,6 +87,7 @@ function MyProvider({ children }) {
     setsaveNames,
     initialStateRules,
     initialStateName,
+    handleRemoveFilter,
   }), [
     apiData,
     inputName,
@@ -98,6 +104,7 @@ function MyProvider({ children }) {
     setsaveNames,
     initialStateRules,
     initialStateName,
+    handleRemoveFilter,
   ]);
 
   return (

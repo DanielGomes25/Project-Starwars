@@ -11,11 +11,10 @@ function FilterNumber() {
     SaveFilter,
     initialStateName,
     initialStateRules,
-    saveMultipleFilter,
     apiData,
     setNameSelect,
+    handleRemoveFilter,
   } = useContext(MyContext);
-  console.log(saveMultipleFilter);
   console.log(apiData);
   console.log(SaveFilter);
 
@@ -73,7 +72,12 @@ function FilterNumber() {
               {visible.inputNumber}
 
             </h4>
-            <button>Remover Filtro</button>
+            <button
+              onClick={ () => handleRemoveFilter(visible.NameSelect) }
+            >
+              Remover Filtro
+
+            </button>
           </>
         ))
         )
