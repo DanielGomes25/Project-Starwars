@@ -23,7 +23,7 @@ function Table() {
         {
           apiData.filter((input) => input.name.includes(inputName)).map((data) => (
             <tr key={ data.name }>
-              <td>{data.name}</td>
+              <td data-testid="planet-name">{data.name}</td>
               <td>{data.rotation_period}</td>
               <td>{data.orbital_period}</td>
               <td>{data.diameter}</td>

@@ -3,11 +3,6 @@ import PropTypes from 'prop-types';
 import MyContext from './MyContext';
 
 function MyProvider({ children }) {
-  const [apiData, setapiData] = useState([]);
-  const [inputName, setinputName] = useState('');
-  const [inputNumber, setinputNumber] = useState(0);
-  const [SaveFilter, setSaveFilter] = useState([]);
-  const [saveNames, setsaveNames] = useState([]);
   const [initialStateName, setinitialStateName] = useState([
     'population',
     'orbital_period',
@@ -20,17 +15,24 @@ function MyProvider({ children }) {
     'menor que',
     'igual a',
   ]);
+  const [apiData, setapiData] = useState([]);
+  const [apiDataInitial, setapiDataInitial] = useState([]);
+  const [inputName, setinputName] = useState('');
+  const [inputNumber, setinputNumber] = useState(0);
+  const [SaveFilter, setSaveFilter] = useState([]);
   const [NameSelect, setNameSelect] = useState(initialStateName[0]);
   const [Rules, setRules] = useState(initialStateRules[0]);
+  const [stateRemove, setStateRemove] = useState(false);
 
+  const requestApi = async () => {
+    const response = await fetch('https://swapi.dev/api/planets');
+    const data = await response.json();
+    const { results } = data;
+    results.map((r) => delete r.residents);
+    setapiData(results);
+    setapiDataInitial(results);
+  };
   useEffect(() => {
-    const requestApi = async () => {
-      const response = await fetch('https://swapi.dev/api/planets');
-      const data = await response.json();
-      const { results } = data;
-      results.map((r) => delete r.residents);
-      setapiData(results);
-    };
     requestApi();
   }, []);
 
@@ -62,14 +64,42 @@ function MyProvider({ children }) {
     inputNumber,
     NameSelect,
     SaveFilter,
-    initialStateName]);
+    initialStateName,
+  ]);
 
   const handleRemoveFilter = useCallback((filterRemove) => {
     const removeFilter = SaveFilter.filter((save) => save.NameSelect !== filterRemove);
     setSaveFilter(removeFilter);
     setinitialStateName((prevState) => [...prevState, filterRemove]);
-    setapiData(apiData);
-  }, [SaveFilter, apiData]);
+    setStateRemove(true);
+  }, [SaveFilter]);
+
+  const removeAllFilters = useCallback(() => {
+    setapiData(apiDataInitial);
+    setSaveFilter([]);
+  }, [apiDataInitial]);
+
+  useEffect(() => {
+    if (stateRemove) {
+      let apiResult = apiData;
+
+      SaveFilter.forEach((element) => {
+        if (element.Rules === 'maior que') {
+          apiResult = apiResult
+            .filter((data) => (data[element.NameSelect]) > +element.inputNumber);
+        } if (element.Rules === 'menor que') {
+          apiResult = apiResult
+            .filter((data) => (data[element.NameSelect] < +element.inputNumber));
+        } if (element.Rules === 'igual a') {
+          apiResult = apiResult
+            .filter((data) => (data[element.NameSelect] === +element.inputNumber));
+        }
+      });
+      setapiData(apiResult);
+      console.log(apiResult);
+    }
+    setStateRemove(false);
+  }, [SaveFilter, apiData, stateRemove]);
 
   const values = useMemo(() => ({
     apiData,
@@ -83,11 +113,13 @@ function MyProvider({ children }) {
     filterApi,
     setNameSelect,
     SaveFilter,
-    saveNames,
-    setsaveNames,
     initialStateRules,
     initialStateName,
     handleRemoveFilter,
+    removeAllFilters,
+    stateRemove,
+    setStateRemove,
+    setapiData,
   }), [
     apiData,
     inputName,
@@ -100,11 +132,13 @@ function MyProvider({ children }) {
     filterApi,
     setNameSelect,
     SaveFilter,
-    saveNames,
-    setsaveNames,
     initialStateRules,
     initialStateName,
     handleRemoveFilter,
+    removeAllFilters,
+    stateRemove,
+    setStateRemove,
+    setapiData,
   ]);
 
   return (
