@@ -81,7 +81,7 @@ function MyProvider({ children }) {
 
   useEffect(() => {
     if (stateRemove) {
-      let apiResult = apiData;
+      let apiResult = apiDataInitial;
 
       SaveFilter.forEach((element) => {
         if (element.Rules === 'maior que') {
@@ -99,7 +99,7 @@ function MyProvider({ children }) {
       console.log(apiResult);
     }
     setStateRemove(false);
-  }, [SaveFilter, apiData, stateRemove]);
+  }, [SaveFilter, apiDataInitial, stateRemove]);
 
   const values = useMemo(() => ({
     apiData,
