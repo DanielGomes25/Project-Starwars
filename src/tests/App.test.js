@@ -170,6 +170,58 @@ userEvent.click(getButtonSort)
 expect(await screen.findByRole('cell', {
   name: /Kamino/i
 })).toBeInTheDocument()
+userEvent.click(getButtonRemoveFilter)
+
+userEvent.clear(getValuFilter)
+
+userEvent.selectOptions(getColumn, 'orbital_period')
+  userEvent.selectOptions(getComparison, 'maior que')
+  userEvent.type(getValuFilter, '341')
+
+  userEvent.click(getButtonFilter)
+  userEvent.selectOptions(getColumnSort, 'population')
+userEvent.click(getSortInputDes)
+
+userEvent.click(getButtonSort)
+
+expect(await screen.findByRole('cell', {
+  name: /Coruscant/i
+})).toBeInTheDocument()
+expect(screen.getAllByTestId('planet-name')).toHaveLength(7)
+
+  })
+  it('testes para o componente filter number testes para o botão de remover filtro unico', async () => {
+    render(
+      <MyProvider>
+      <App />
+    
+    </MyProvider>,
+    )
+   
+    const getColumn = screen.getByTestId('column-filter')
+    const getComparison = screen.getByTestId('comparison-filter')
+    const getValuFilter = screen.getByTestId('value-filter')
+    const getButtonFilter = screen.getByTestId('button-filter')
+    const getButtonRemoveFilter = screen.getByRole('button', {
+      name: 'REMOVER FILTROS'
+    })
+    userEvent.click(getButtonRemoveFilter)
+    userEvent.clear(getValuFilter)
+
+    userEvent.selectOptions(getColumn, 'orbital_period')
+    userEvent.selectOptions(getComparison, 'maior que')
+    userEvent.type(getValuFilter, '364')
+    userEvent.click(getButtonFilter)
+  
+    const getRemoveSilgleFilter = screen.getByRole('button', {
+      name: 'Remover Filtro'
+    })
+    act(() => {
+      
+    userEvent.click(getRemoveSilgleFilter)
+  })
+
+  expect(getButtonRemoveFilter).toBeInTheDocument()
 
   })
 })
